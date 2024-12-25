@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
-// import { useDispatch, useSelector } from 'react-redux';
-import { AppState, CounterId, store } from './store';
+import { AppState, CounterId, selectCounter, store, useAppSelector } from './store';
+import { useDispatch } from 'react-redux';
+import { UsersList } from './users-list';
 
 function App() {
-	// const dispatch = useDispatch();
-	// const state = useSelector()
+	// const lol = (): number => {return 5}
+	// type a = typeof lol;
+	// type b = ReturnType<typeof lol>;
 
 	return (
 		<>
@@ -24,38 +26,40 @@ function App() {
 				<Counter counterId='0' />
 				<Counter counterId='1' />
 			</div>
+
+			<UsersList />
 		</>
 	);
 }
 
-const selectCounter = (state: AppState, counterId: CounterId) => state.counters[counterId];
-
 export const Counter = ({ counterId }: { counterId: CounterId }) => {
 	console.log('Render: ', counterId);
+	const dispatch = useDispatch();
+	const counterState = useAppSelector((s) => selectCounter(s, counterId));
 
-	const [, setLol] = useState(false);
+	// const [, setLol] = useState(false);
 
-	const lastStateRef = useRef<ReturnType<typeof selectCounter>>();
+	// const lastStateRef = useRef<ReturnType<typeof selectCounter>>();
 
-	useEffect(() => {
-		const unsubscribe = store.subscribe(() => {
-			const currentState = selectCounter(store.getState(), counterId);
-			const lastState = lastStateRef.current;
-			if (currentState !== lastState) {
-				setLol((prev) => !prev);
-			}
-			lastStateRef.current = currentState;
-		});
-		return unsubscribe;
-	}, []);
+	// useEffect(() => {
+	// 	const unsubscribe = store.subscribe(() => {
+	// 		const currentState = selectCounter(store.getState(), counterId);
+	// 		const lastState = lastStateRef.current;
+	// 		if (currentState !== lastState) {
+	// 			setLol((prev) => !prev);
+	// 		}
+	// 		lastStateRef.current = currentState;
+	// 	});
+	// 	return unsubscribe;
+	// }, []);
 
-	const counterState = selectCounter(store.getState(), counterId);
+	// const counterState = selectCounter(store.getState(), counterId);
 
 	return (
 		<>
 			<div className='card'>
-				<button onClick={() => store.dispatch({ type: 'inc', payload: { counterId } })}>Inc</button>
-				<button onClick={() => store.dispatch({ type: 'dec', payload: { counterId } })}>Dec</button>
+				<button onClick={() => dispatch({ type: 'inc', payload: { counterId } })}>Inc</button>
+				<button onClick={() => dispatch({ type: 'dec', payload: { counterId } })}>Dec</button>
 				<p>Counter: {counterState?.counter}</p>
 			</div>
 		</>
